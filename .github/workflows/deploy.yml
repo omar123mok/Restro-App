@@ -44,8 +44,8 @@ jobs:
           file: ./dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/restro-application:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/restro-application:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/restro-app:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/restro-app:${{ github.sha }}
       
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -56,7 +56,7 @@ jobs:
 
       - name: Download Amazon ECS task definition
         run: | 
-         aws ecs describe-task-definition --task-definition restro-task --query taskDefinition > task-definition.json
+         aws ecs describe-task-definition --task-definition restro-tasks --query taskDefinition > task-definition.json
          cat task-definition.json
 
       - name: Replace Docker image ID and create new Task definition
@@ -65,7 +65,7 @@ jobs:
         with:
           task-definition: task-definition.json
           container-name: ${{ env.CONTAINER_NAME }}
-          image: ${{ secrets.DOCKERHUB_USERNAME }}/restro-application:latest
+          image: ${{ secrets.DOCKERHUB_USERNAME }}/restro-app:latest
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
